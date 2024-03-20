@@ -1,4 +1,4 @@
-package activity
+package comment
 
 import (
 	"github.com/golang-jwt/jwt/v5"
@@ -7,23 +7,23 @@ import (
 
 type CommentController interface {
 	Add() echo.HandlerFunc
-	Update() echo.HandlerFunc
-	Delete() echo.HandlerFunc
+	//Update() echo.HandlerFunc
+	//Delete() echo.HandlerFunc
 	// ShowMyTodo() echo.HandlerFunc
 }
 
 type CommentModel interface {
-	InsertComment(pemilik string, kegiatanBaru Comment) (Comment, error)
-	UpdateComment(pemilik string, activityID uint, data Comment) (Comment, error)
+	InsertComment(userID string, contentBaru Comment) (Comment, error)
+	UpdateComment(userID string, ID uint, data Comment) (Comment, error)
 	// DeleteActivity()
-	GetCommentByOwner(pemilik string) ([]Comment, error)
+	GetComment(userID string) ([]Comment, error)
 }
 
-type ActivityService interface {
-	AddComment(pemilik *jwt.Token, kegiatanBaru Comment) (Comment, error)
-	// UpdateTodo(pemilik *jwt.Token, todoID string, data Todo) (Todo, error)
+type CommentService interface {
+	AddComment(userID *jwt.Token, contentBaru Comment) (Comment, error)
+	// UpdateTodo(userID *jwt.Token,
 }
 
 type Comment struct {
-	Kegiatan string
+	Content string
 }

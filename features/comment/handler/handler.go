@@ -1,7 +1,7 @@
 package handler
 
 import (
-	activity "21-api/features/comment"
+	comment "21-api/features/comment"
 	"21-api/helper"
 	"log"
 	"net/http"
@@ -23,7 +23,7 @@ func NewHandler(service comment.CommentService) comment.CommentController {
 
 func (ct *controller) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input ActivityRequest
+		var input CommentRequest
 		err := c.Bind(&input)
 		if err != nil {
 			log.Println("error bind data:", err.Error())
@@ -41,14 +41,14 @@ func (ct *controller) Add() echo.HandlerFunc {
 				helper.ResponseFormat(http.StatusBadRequest, helper.UserInputError, nil))
 		}
 
-		var inputProcess activity.Activity
-		inputProcess.Kegiatan = input.Kegiatan
-		result, err := ct.s.AddActivity(token, inputProcess)
+		var inputProcess comment.Comment
+		inputProcess.Content = input.Content
+		result, err := ct.s.AddComment(token, inputProcess)
 		if err != nil {
 			log.Println("error insert db:", err.Error())
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, helper.ServerGeneralError, nil))
 		}
 
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "berhasil menambahkan kegiatan", result))
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "Komentar ditambahkan", result))
 	}
 }

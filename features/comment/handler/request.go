@@ -1,5 +1,5 @@
 package handler
 
-type ActivityRequest struct {
-	Kegiatan string `json:"kegiatan" form:"kegiatan" validate:"required"`
+type CommentRequest struct {
+	Content string `json:"content" form:"content" validate:"required"`
 }

@@ -25,10 +25,10 @@ func NewService(m user.UserModel) user.UserService {
 	}
 }
 
-// Fungsi digunakan untuk memproses registrasi pengguna baru dengan menerima data pengguna baru (nama, nomor HP, dan password) sebagai parameter input
+// Fungsi digunakan untuk memproses registrasi pengguna baru dengan menerima data pengguna baru
 func (s *service) Register(newData user.User) error {
 	var registerValidate user.Register
-	registerValidate.Nama = newData.Nama
+	registerValidate.Name = newData.Name
 	registerValidate.Email = newData.Email
 	registerValidate.Password = newData.Password
 	registerValidate.Hp = newData.Hp
@@ -38,7 +38,7 @@ func (s *service) Register(newData user.User) error {
 		return err
 	}
 
-	newPassword, err := s.pm.HashPassword(newData.Password)
+	newPassword, err := s.pm.HashPassword(newData.Password) //Menjadikan Password menjadi bentuk Hash
 	if err != nil {
 		return errors.New(helper.ServiceGeneralError)
 	}
@@ -89,4 +89,64 @@ func (s *service) Profile(token *jwt.Token) (user.User, error) {
 	}
 
 	return result, nil
+}
+
+// Delete User
+func (s *service) DeleteUser(userID string) error {
+	// Lakukan logika penghapusan pengguna berdasarkan userID
+	err := s.model.DeleteUser(userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetUserByHP digunakan untuk mendapatkan pengguna berdasarkan nomor HP
+func (s *service) GetUserByHP(hp string) (user.User, error) {
+	// Memanggil model untuk mendapatkan pengguna berdasarkan nomor HP
+	result, err := s.model.GetUserByHP(hp)
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return result, nil
+}
+
+// UpdateUser digunakan untuk memperbarui pengguna berdasarkan nomor HP
+func (s *service) UpdateUser(hp string, newData user.User) error {
+	// Validasi data pengguna yang akan diperbarui
+	err := s.v.Struct(&newData)
+	if err != nil {
+		log.Println("error validasi", err.Error())
+		return err
+	}
+
+	// Periksa apakah pengguna yang ingin diperbarui berdasarkan nomor HP ada dalam database
+	existingUser, err := s.model.GetUserByHP(hp)
+	if err != nil {
+		return err // Pengguna tidak ditemukan, kembalikan kesalahan
+	}
+
+	// Periksa apakah ada perubahan pada kata sandi
+	if newData.Password != "" {
+		// Lakukan hashing pada kata sandi baru menggunakan PasswordManager
+		hashedPassword, err := s.pm.HashPassword(newData.Password)
+		if err != nil {
+			return err // Kembalikan kesalahan jika hashing gagal
+		}
+		// Gunakan kata sandi yang telah di-hash
+		existingUser.Password = hashedPassword
+	}
+
+	// Perbarui data pengguna dengan informasi baru
+	existingUser.Name = newData.Name
+	existingUser.Email = newData.Email
+
+	// Perbarui data pengguna di database
+	err = s.model.UpdateUser(hp, existingUser)
+	if err != nil {
+		return err // Kembalikan kesalahan jika gagal memperbarui pengguna di database
+	}
+
+	return nil
 }

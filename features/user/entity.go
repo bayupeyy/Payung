@@ -6,15 +6,21 @@ import (
 )
 
 type UserController interface {
-	Add() echo.HandlerFunc
+	RegisterUser() echo.HandlerFunc
 	Login() echo.HandlerFunc
 	Profile() echo.HandlerFunc
+	DeleteUser() echo.HandlerFunc
+	GetUserByHP() echo.HandlerFunc
+	UpdateUser() echo.HandlerFunc
 }
 
 type UserService interface {
 	Register(newData User) error
 	Login(loginData User) (User, string, error)
 	Profile(token *jwt.Token) (User, error)
+	DeleteUser(userID string) error
+	GetUserByHP(hp string) (User, error)
+	UpdateUser(hp string, newData User) error
 }
 
 type UserModel interface {
@@ -22,10 +28,11 @@ type UserModel interface {
 	UpdateUser(hp string, data User) error
 	Login(hp string) (User, error)
 	GetUserByHP(hp string) (User, error)
+	DeleteUser(userID string) error
 }
 
 type User struct {
-	Nama     string
+	Name     string
 	Email    string
 	Password string
 	Hp       string
@@ -37,7 +44,7 @@ type Login struct {
 }
 
 type Register struct {
-	Nama     string `validate:"required,alpha"`
+	Name     string `validate:"required,alpha"`
 	Email    string
 	Password string `validate:"required,alphanum,min=8"`
 	Hp       string `validate:"required,min=10,max=13,numeric"`

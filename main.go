@@ -2,9 +2,9 @@ package main
 
 import (
 	"21-api/config"
-	td "21-api/features/activity/data"
-	th "21-api/features/activity/handler"
-	ts "21-api/features/activity/services"
+	td "21-api/features/comment/data"
+	th "21-api/features/comment/handler"
+	ts "21-api/features/comment/services"
 	"21-api/features/user/data"
 	"21-api/features/user/handler"
 	"21-api/features/user/services"
@@ -23,13 +23,13 @@ func main() {
 	userService := services.NewService(userData)
 	userHandler := handler.NewUserHandler(userService)
 
-	activityData := td.New(db)
-	activityService := ts.NewActivityService(activityData)
-	activityHandler := th.NewHandler(activityService)
+	commentData := td.New(db)
+	commentService := ts.NewCommentService(commentData)
+	commentHandler := th.NewHandler(commentService)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS()) // ini aja cukup
-	routes.InitRoute(e, userHandler, activityHandler)
+	routes.InitRoute(e, userHandler, commentHandler)
 	e.Logger.Fatal(e.Start(":1323"))
 }

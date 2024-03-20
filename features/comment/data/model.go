@@ -9,8 +9,8 @@ import (
 type Comment struct {
 	gorm.Model
 	ID        uint   `gorm:"primaryKey"`
-	PostID    uint   `gorm:"not null"`
-	UserID    uint   `gorm:"not null"`
+	PostID    string `gorm:"not null"`
+	UserID    string `gorm:"not null"`
 	Content   string `gorm:"not null"`
 	CreatedAt time.Time
 }

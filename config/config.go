@@ -1,7 +1,7 @@
 package config
 
 import (
-	activity "21-api/features/activity/data"
+	comment "21-api/features/comment/data"
 	user "21-api/features/user/data"
 	"fmt"
 	"os"
@@ -77,7 +77,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&user.User{}, &activity.Activity{})
+	db.AutoMigrate(&user.User{}, &comment.Comment{})
 
 	return db
 }

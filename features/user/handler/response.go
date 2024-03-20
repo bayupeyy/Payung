@@ -2,6 +2,6 @@ package handler
 
 type LoginResponse struct {
 	Hp    string `json:"hp"`
-	Nama  string `json:"nama"`
+	Name  string `json:"name"`
 	Token string `json:"token"`
 }

@@ -17,32 +17,32 @@ func New(db *gorm.DB) comment.CommentModel {
 	}
 }
 
-func (cm *model) InsertComment(PostID uint, commentBaru comment.CommentModel) (comment.CommentModel, error) {
-	var inputProcess = Comment{Content: commentBaru.Comment, PostID: PostID}
+func (cm *model) InsertComment(PostID string, contentBaru comment.Comment) (comment.Comment, error) {
+	var inputProcess = Comment{Content: contentBaru.Content, PostID: PostID}
 	if err := cm.connection.Create(&inputProcess).Error; err != nil {
-		return comment.CommentModel{}, err
+		return comment.Comment{}, err
 	}
 
-	return comment.CommentModel{Content: inputProcess.Content}, nil
+	return comment.Comment{Content: inputProcess.Content}, nil
 }
 
 // Fungsi untuk Edit Comment
-func (cm *model) UpdateComment(PostID uint, data comment.CommentModel) (comment.CommentModel, error) {
-	var qry = cm.connection.Where("postid = ?", PostID).Updates(data)
+func (cm *model) UpdateComment(postID string, commentID uint, data comment.Comment) (comment.Comment, error) {
+	var qry = cm.connection.Where("id = ? AND postid = ?", commentID, postID).Updates(data)
 	if err := qry.Error; err != nil {
-		return comment.CommentModel{}, err
+		return comment.Comment{}, err
 	}
 
 	if qry.RowsAffected < 1 {
-		return comment.CommentModel{}, errors.New("no data affected")
+		return comment.Comment{}, errors.New("no data affected")
 	}
 
 	return data, nil
 }
 
-func (cm *model) GetCommentByOwner(PostID uint) ([]comment.CommentModel, error) {
-	var result []comment.CommentModel
-	if err := cm.connection.Where("postid = ?", PostID).Find(&result).Error; err != nil {
+func (cm *model) GetComment(userID string) ([]comment.Comment, error) {
+	var result []comment.Comment
+	if err := cm.connection.Where("userid = ?", userID).Find(&result).Error; err != nil {
 		return nil, err
 	}
 

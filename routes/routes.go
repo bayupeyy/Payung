@@ -9,37 +9,32 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func InitRoute(c *echo.Echo, ctl user.UserController, cc comment.CommentController) {
+func InitRoute(c *echo.Echo, ctl user.Controller, cc comment.CommentController) {
 	userRoute(c, ctl)
 	//activityRoute(c, ac)
 
 }
 
-func userRoute(c *echo.Echo, ctl user.UserController) {
+func userRoute(c *echo.Echo, ctl user.Controller) {
 	c.POST("/login", ctl.Login())
-	c.GET("/users/:hp", ctl.Profile(), echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(config.JWTSECRET),
-	}))
-
-	//GetUserByHp
-	c.GET("/users/:hp", ctl.GetUserByHP())
 
 	//Register User
-	c.POST("/register", ctl.RegisterUser()) //Endpoint untuk API
+	c.POST("/register", ctl.Register()) //Endpoint untuk API
 
 	//DeleteUser
-	c.DELETE("/users/:id", ctl.DeleteUser(), echojwt.WithConfig(echojwt.Config{
+	c.DELETE("/users/:id", ctl.Delete(), echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(config.JWTSECRET),
 	}))
 
 	// UpdateUser
-	c.PUT("/users/:hp", ctl.UpdateUser())
+	c.PUT("/users/:hp", ctl.Update())
 
 }
 
 func commentRoute(c *echo.Echo, cc comment.CommentController) {
-	//Komentar
-	c.POST("/comment", cc.Add(), echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(config.JWTSECRET),
-	}))
+	//Menambahkan Komentar
+	c.POST("/comment", cc.AddComment())
+
+	//Delete Komentar
+	c.DELETE("/comment/:commentID", cc.DeleteComment())
 }
